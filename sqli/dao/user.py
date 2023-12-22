@@ -1,6 +1,7 @@
 from hashlib import md5
 from typing import NamedTuple, Optional
 
+
 from aiopg import Connection
 
 
@@ -19,22 +20,20 @@ class User(NamedTuple):
 
     @staticmethod
     async def get(conn: Connection, id_: int):
+        txt_sql = ('SELECT id, first_name, middle_name, last_name, '
+                'username, pwd_hash, is_admin FROM users WHERE id = %(id_)s')
+        param_sql = {'id_': id_}
         async with conn.cursor() as cur:
-            await cur.execute(
-                'SELECT id, first_name, middle_name, last_name, '
-                'username, pwd_hash, is_admin FROM users WHERE id = %s',
-                (id_,),
-            )
+            await cur.execute(txt_sql, param_sql)
             return User.from_raw(await cur.fetchone())
 
     @staticmethod
     async def get_by_username(conn: Connection, username: str):
+        sql = ('SELECT id, first_name, middle_name, last_name, '
+                'username, pwd_hash, is_admin FROM users WHERE username = %(username)s')
+        param = {'username': username}
         async with conn.cursor() as cur:
-            await cur.execute(
-                'SELECT id, first_name, middle_name, last_name, '
-                'username, pwd_hash, is_admin FROM users WHERE username = %s',
-                (username,),
-            )
+            await cur.execute(sql, param)
             return User.from_raw(await cur.fetchone())
     
     @staticmethod

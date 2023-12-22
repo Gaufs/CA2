@@ -1,4 +1,5 @@
 import logging
+
 from datetime import datetime
 from itertools import groupby
 
@@ -6,6 +7,8 @@ from aiohttp.web import Request, HTTPFound
 from aiohttp.web_exceptions import HTTPNotFound, HTTPForbidden
 from aiohttp_jinja2 import template
 from aiohttp_session import get_session
+from aiohttp_session import new_session
+
 from trafaret import DataError
 
 from sqli.dao.course import Course
@@ -24,7 +27,7 @@ async def index(request: Request):
     app: Application = request.app
     auth_user = await get_auth_user(request)
 
-    session = await get_session(request)
+    session = await new_session(request) #changed get_session to new_session in order to guard agains Session Fixation attacks
     last_visited = session.get('last_visited', 'never')
     session['last_visited'] = datetime.now().isoformat()
 
@@ -52,7 +55,7 @@ async def register(request: Request):
     app: Application = request.app
     auth_user = await get_auth_user(request)
 
-    session = await get_session(request)
+    session = await new_session(request)
     last_visited = session.get('last_visited', 'never')
     session['last_visited'] = datetime.now().isoformat()
 
@@ -67,6 +70,7 @@ async def register(request: Request):
         last_name = data['last_name']
         username = data['username2']
         password = data['password2']
+        
         async with app['db'].acquire() as conn:
             await User.create(conn, first_name, middle_name, last_name, username, password)
         session.pop('user_id', None)

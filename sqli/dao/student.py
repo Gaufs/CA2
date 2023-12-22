@@ -13,11 +13,10 @@ class Student(NamedTuple):
 
     @staticmethod
     async def get(conn: Connection, id_: int):
+        sql = ('SELECT id, name FROM students WHERE id = %(id_)s')
+        params = {'id_' : id_}
         async with conn.cursor() as cur:
-            await cur.execute(
-                'SELECT id, name FROM students WHERE id = %s',
-                (id_,),
-            )
+            await cur.execute(sql, params)
             r = await cur.fetchone()
             return Student.from_raw(r)
 
@@ -40,8 +39,9 @@ class Student(NamedTuple):
     @staticmethod
     async def create(conn: Connection, name: str):
         q = ("INSERT INTO students (name) "
-             "VALUES ('%(name)s')" % {'name': name})
+             "VALUES ('%(name)s')")
+        params = {'name': name}
         async with conn.cursor() as cur:
-            await cur.execute(q)
+            await cur.execute(q, params)
 
 

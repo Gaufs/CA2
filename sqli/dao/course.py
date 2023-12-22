@@ -14,12 +14,11 @@ class Course(NamedTuple):
 
     @staticmethod
     async def get(conn: Connection, id_: int):
+        q = ('SELECT id, title, description '
+            'FROM courses WHERE id = %(id_)s')
+        j = {'id_': id_}
         async with conn.cursor() as cur:
-            await cur.execute(
-                'SELECT id, title, description '
-                'FROM courses WHERE id = %s',
-                (id_,),
-            )
+            await cur.execute(q, j)
             return Course.from_raw(await cur.fetchone())
 
     @staticmethod
