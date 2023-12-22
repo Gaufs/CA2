@@ -10,6 +10,12 @@ def setup_routes(app: Application):
     app.router.add_route('GET', r'/', views.index)
     app.router.add_route('POST', r'/', views.index)
 
+    app.router.add_route('GET', r'/register/', views.register)
+    app.router.add_route('POST', r'/register/', views.register)
+
+    app.router.add_route('GET', r'/profile/', views.profile)
+    app.router.add_route('GET', r'/profile/{id:\d+}', views.profile_delete)
+
     app.router.add_route('GET', r'/students/', views.students)
     app.router.add_route('POST', r'/students/', views.students)
     app.router.add_route('GET', r'/students/{id:\d+}', views.student)

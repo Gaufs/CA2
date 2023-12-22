@@ -28,12 +28,15 @@
                     <form method="POST" action="/logout/">
                         <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
                         <div class="valign-wrapper" style="height: 100%">
-                            <button class="btn pink waves-effect waves-light" type="submit">AAAAAAAAAAAAAAAAAAAAAAAAAAAA</button>
+                            <button class="btn pink waves-effect waves-light" type="submit">Log out</button>
                         </div>
                     </form>
                 </li>
+                <li>
+                    <a href="/profile/" class="breadcrumb">profile</a>
+                </li>
             </ul>
-
+            
             <ul id="nav-mobile" class="side-nav black-text" style="transform: translateX(-100%);">
                 <li>
                     <span class="">{{ auth_user.first_name }} {{ auth_user.middle_name or '' }} {{ auth_user.last_name }}</span>

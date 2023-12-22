@@ -47,6 +47,65 @@ async def index(request: Request):
             'errors': errors,
             'auth_user': auth_user}
 
+@template('register.jinja2')
+async def register(request: Request):
+    app: Application = request.app
+    auth_user = await get_auth_user(request)
+
+    session = await get_session(request)
+    last_visited = session.get('last_visited', 'never')
+    session['last_visited'] = datetime.now().isoformat()
+
+    errors = []
+
+    if request.method == 'POST':
+        if auth_user:
+            raise HTTPForbidden()
+        data = await request.post()
+        first_name = data['first_name']
+        middle_name = data['middle_name']
+        last_name = data['last_name']
+        username = data['username2']
+        password = data['password2']
+        async with app['db'].acquire() as conn:
+            await User.create(conn, first_name, middle_name, last_name, username, password)
+        session.pop('user_id', None)
+        raise HTTPFound('/')
+                    
+    return {'last_visited': last_visited,
+            'errors': errors,
+            'auth_user': auth_user}
+
+@template('profile.jinja2')
+async def profile(request: Request):
+    app: Application = request.app
+    auth_user = await get_auth_user(request)
+
+    session = await get_session(request)
+    last_visited = session.get('last_visited', 'never')
+    session['last_visited'] = datetime.now().isoformat()
+
+    errors = []
+    
+    return {'last_visited': last_visited,
+            'errors': errors,
+            'auth_user': auth_user}
+
+@template('profile.jinja2')
+async def profile_delete(request: Request):
+    session = await get_session(request)
+    app: Application = request.app
+    auth_user = await get_auth_user(request)
+    id = int(request.match_info['id'])
+    async with app['db'].acquire() as conn:
+        await User.delete(conn, id)
+
+    
+    session.pop('user_id', None)
+    raise HTTPFound('/')
+      
+    
+
 
 @template('students.jinja2')
 async def students(request: Request):

@@ -1,0 +1,35 @@
+{% extends 'base.jinja2' %}
+
+{% block content %}
+    <h2>It is alive! =)</h2>
+    <p>last visit: {{ last_visited }}</p>
+
+    <a href="/students/">Students</a><br/>
+    <a href="/courses/">Courses</a><br/>
+{% endblock %}
+
+{% block aside %}
+    {% if  auth_user %}
+        <div class="row">
+            <form class="col s12" method="POST">
+                <div class="card">
+                    {% if errors %}
+                        <div class="row">
+                            <div class="toast" style="top: 0;">
+                                {% for error in errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="card-action">
+                            <a class="btn pink waves-effect waves-light"
+                             href="/profile/{{ auth_user.id }}"
+                             title="Delete Profile">Delete Profile</a>
+                        
+                    </div>
+                </div>
+            </form>
+        </div>
+    {% endif %}
+{% endblock %}
