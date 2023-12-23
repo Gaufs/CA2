@@ -18,7 +18,7 @@ class Student(NamedTuple):
         async with conn.cursor() as cur:
             await cur.execute(sql, params)
             r = await cur.fetchone()
-            return Student.from_raw(r)
+            return Student.from_raw(r) #use of SQL parameters to avoid SQL injections
 
     @staticmethod
     async def get_many(conn: Connection, limit: Optional[int] = None,
@@ -39,9 +39,9 @@ class Student(NamedTuple):
     @staticmethod
     async def create(conn: Connection, name: str):
         q = ("INSERT INTO students (name) "
-             "VALUES ('%(name)s')")
+             "VALUES (%(name)s)")
         params = {'name': name}
         async with conn.cursor() as cur:
-            await cur.execute(q, params)
+            await cur.execute(q, params) #use of SQL parameters to avoid SQL injections
 
 

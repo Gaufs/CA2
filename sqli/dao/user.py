@@ -24,7 +24,7 @@ class User(NamedTuple):
                 'username, pwd_hash, is_admin FROM users WHERE id = %(id_)s')
         param_sql = {'id_': id_}
         async with conn.cursor() as cur:
-            await cur.execute(txt_sql, param_sql)
+            await cur.execute(txt_sql, param_sql) #use of SQL parameters to avoid SQL injections
             return User.from_raw(await cur.fetchone())
 
     @staticmethod
@@ -33,23 +33,23 @@ class User(NamedTuple):
                 'username, pwd_hash, is_admin FROM users WHERE username = %(username)s')
         param = {'username': username}
         async with conn.cursor() as cur:
-            await cur.execute(sql, param)
+            await cur.execute(sql, param) #use of SQL parameters to avoid SQL injections
             return User.from_raw(await cur.fetchone())
     
-    @staticmethod
+    @staticmethod #Method created to safe the information a user introduces in the registration form in the databese
     async def create(conn: Connection, first_name: str, middle_name: Optional[str], last_name: str, username: str, pwd_hash: str):
         q = ('INSERT INTO users (first_name, middle_name, last_name, username, pwd_hash, is_admin ) '
             'VALUES (%(first_name)s, %(middle_name)s,  %(last_name)s,  %(username)s,  md5(%(pwd_hash)s), FALSE)')
         params = { 'first_name': first_name,'middle_name': middle_name, 'last_name': last_name, 'username': username, 'pwd_hash': pwd_hash}
         async with conn.cursor() as cur:
-            await cur.execute(q, params)
+            await cur.execute(q, params) #use of SQL parameters to avoid SQL injections
     
     @staticmethod
-    async def delete(conn: Connection, id: int):
+    async def delete(conn: Connection, id: int): #Function created to delete a user from the database
         q2 = ('DELETE FROM users WHERE id = %(id)s ')
         params2 = {'id': id}
         async with conn.cursor() as cur:
-            await cur.execute(q2, params2)
+            await cur.execute(q2, params2)#use of SQL parameters to avoid SQL injections
 
     def check_password(self, password: str):
         return self.pwd_hash == md5(password.encode('utf-8')).hexdigest()

@@ -18,7 +18,7 @@ class Course(NamedTuple):
             'FROM courses WHERE id = %(id_)s')
         j = {'id_': id_}
         async with conn.cursor() as cur:
-            await cur.execute(q, j)
+            await cur.execute(q, j) #use of SQL parameters to avoid SQL injections
             return Course.from_raw(await cur.fetchone())
 
     @staticmethod

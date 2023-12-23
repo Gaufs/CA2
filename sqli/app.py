@@ -32,7 +32,7 @@ def init(argv):
 
     setup_jinja(app, loader=PackageLoader('sqli', 'templates'),
                 context_processors=[csrf_processor, auth_user_processor],
-                autoescape=True)
+                autoescape=True) #changed the autoescape valu to true inorder to avoid the injection of exterior content and avoid XSS attacks
     setup_database(app)
     setup_redis(app)
     setup_routes(app)
