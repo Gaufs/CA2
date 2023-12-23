@@ -114,17 +114,13 @@ async def profile_delete(request: Request):
 @template('students.jinja2')
 async def students(request: Request):
     app: Application = request.app
-    auth_user = await get_auth_user(request)
     if request.method == 'POST':
         data = await request.post()
-        if auth_user:
-            raise HTTPForbidden()
         async with app['db'].acquire() as conn:
             await Student.create(conn, data['name'])
     async with app['db'].acquire() as conn:
         students = await Student.get_many(conn)
     return {'students': students}
-
 
 @template('student.jinja2')
 async def student(request: Request):
